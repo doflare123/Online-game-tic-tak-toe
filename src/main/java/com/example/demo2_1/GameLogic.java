@@ -1,6 +1,5 @@
 package com.example.demo2_1;
 
-import java.util.Random;
 
 public class GameLogic extends HelloApplication {
     private final int[][] pole;
@@ -9,7 +8,7 @@ public class GameLogic extends HelloApplication {
     public GameLogic(int[][] pole) {
         this.pole = pole;
     }
-    public boolean allCellsFilled() {
+    public  boolean allCellsFilled() {
         allCellsFilled = true; // Изначально считаем, что все ячейки заполнены
 
         // Проверка всех ячеек
@@ -21,7 +20,7 @@ public class GameLogic extends HelloApplication {
                 }
             }
         }
-        return true; // Если все ячейки заполнены, возвращаем true
+        return !checkWin(currentPlayer);// Если все ячейки заполнены, возвращаем true
     }
 
     public boolean checkWin(int player) {

@@ -13,7 +13,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class GameModeDialog {
-    protected static boolean playWithBot;
+
+    public static boolean playWithBot;
 
     public GameModeDialog() {
     }
@@ -40,4 +41,6 @@ public class GameModeDialog {
         stage.showAndWait();
         return playWithBot;
     }
+
+
 }
