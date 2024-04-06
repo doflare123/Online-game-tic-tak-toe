@@ -7,8 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -28,6 +30,7 @@ public class HelloApplication extends Application {
     private final int[][] pole = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
     public Pane root = new Pane();
     private GameLogic gameLogic;
+
 
 
     int currentPlayer = (new Random()).nextBoolean() ? player1.getId() : player2.getId();
@@ -153,20 +156,20 @@ public class HelloApplication extends Application {
 
     private void StarMenu(){
         Stage StartMenu = new Stage();
-        Button Enter = new Button("Вход");//Отсюда начинается херня для регистрации и входа
-        TextField Nick = new TextField("Введите имя");
-        TextField Password = new TextField("Введите пароль");
-        Hyperlink ForgotPassword = new Hyperlink("Забыли пароль?");
+        Group startmain = getStartMenu();
+        Group stackPane = new Group();
+        //Гиперссылка на создание нового аккаунта
         Hyperlink NewAccount = new Hyperlink("Не имеете аккаут?");
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(Enter, Nick, Password, ForgotPassword, NewAccount);
-        Scene StartMen = new Scene(stackPane, 800, 800);
+        NewAccount.setLayoutY(380);
+        NewAccount.setLayoutX(0);
+        stackPane.getChildren().addAll(startmain, NewAccount);
+        Scene StartMen = new Scene(stackPane, 400, 400);
         StartMenu.setScene(StartMen);
         StartMenu.setResizable(false);
         StartMenu.setTitle("Tic Tac Toe вход");//Здесь заканчивается тем, что следующая строка вызывает окно
         StartMenu.show();
         NewAccount.setOnAction(event -> Register());//Нажатие на надпись, что нет акка
-        Enter.setOnAction(actionEvent -> GameStart());//Нажатие на кнопку войти
+ //       Enter.setOnAction(actionEvent -> GameStart());//Нажатие на кнопку войти
     }
 
     private void Register(){
@@ -177,12 +180,47 @@ public class HelloApplication extends Application {
         StackPane StartMain = new StackPane();
         StackPane Reg = new StackPane();
         StartMain.getChildren().addAll(Nick, Password, SecretWord);
-        Scene Register = new Scene(Reg, 400, 400);
+        Scene Register = new Scene(Reg, 200, 200);
         RegisterMenu.setScene(Register);
         RegisterMenu.setResizable(false);
         RegisterMenu.setTitle("Окно регистрации");//следующая строка уже открытие окна
         RegisterMenu.show();
 
+    }
+
+    private Group getStartMenu(){
+        ImageView EnterButton = new ImageView("C:\\Users\\ABOBUS2006\\IdeaProjects\\demo2.1\\idef\\entry-door.png");
+        Button Enter = new Button("",EnterButton);//Отсюда начинается херня для регистрации и входа
+        TextField Nick = new TextField();
+        TextField Password = new TextField();
+        Hyperlink ForgotPassword = new Hyperlink("Забыли пароль?");
+        Label Error = new Label("*Введен неверный логин или пароль");
+        //Кнопка входа
+        EnterButton.setFitWidth(Enter.getWidth());
+        EnterButton.setFitHeight(Enter.getHeight());
+        EnterButton.setPreserveRatio(false);
+        Enter.setStyle("-fx-padding: -15;");
+        Enter.setLayoutY(260);
+        Enter.setLayoutX(180);
+        Enter.setPrefWidth(15); // Установка предпочтительной ширины кнопки
+        Enter.setPrefHeight(20); // Установка предпочтительной высоты кнопки
+        //Поле ввода имени
+        Nick.setPromptText("Введите имя");
+        Nick.setLayoutY(70);
+        Nick.setLayoutX(120);
+        //Поле ввода пароля
+        Password.setPromptText("Введите пароль");
+        Password.setLayoutY(100);
+        Password.setLayoutX(120);
+        //Гиперссылка на забытый пароль
+        ForgotPassword.setLayoutY(120);
+        ForgotPassword.setLayoutX(175);
+        //Ошибка ввода
+        Error.setTextFill(Color.RED);
+        Error.setVisible(false);
+        Error.setLayoutY(220);
+        Error.setLayoutX(95);
+        return new Group(Enter,Nick,Password,ForgotPassword, Error);
     }
 
     public static void main(String[] args) {launch();}
