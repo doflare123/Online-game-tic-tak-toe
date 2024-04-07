@@ -1,16 +1,12 @@
 package com.example.demo2_1;
 
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -19,6 +15,7 @@ import javafx.stage.Stage;
 import java.util.Random;
 
 import static com.example.demo2_1.GameModeDialog.playWithBot;
+
 
 
 public class HelloApplication extends Application {
@@ -30,10 +27,15 @@ public class HelloApplication extends Application {
     private final int[][] pole = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
     public Pane root = new Pane();
     private GameLogic gameLogic;
-
+    Stage StartMenu = new Stage();
+    ImageView FalsePass = new ImageView("C:\\Users\\ABOBUS2006\\IdeaProjects\\demo2.1\\idef\\hazard-sign.png");
+    PasswordField  Password = new PasswordField ();
+    PasswordField  ReturnPassword = new PasswordField ();
 
 
     int currentPlayer = (new Random()).nextBoolean() ? player1.getId() : player2.getId();
+
+
     public HelloApplication() {
     }
 
@@ -155,7 +157,6 @@ public class HelloApplication extends Application {
     }
 
     private void StarMenu(){
-        Stage StartMenu = new Stage();
         Group startmain = getStartMenu();
         Group stackPane = new Group();
         //Гиперссылка на создание нового аккаунта
@@ -168,31 +169,78 @@ public class HelloApplication extends Application {
         StartMenu.setResizable(false);
         StartMenu.setTitle("Tic Tac Toe вход");//Здесь заканчивается тем, что следующая строка вызывает окно
         StartMenu.show();
-        NewAccount.setOnAction(event -> Register());//Нажатие на надпись, что нет акка
- //       Enter.setOnAction(actionEvent -> GameStart());//Нажатие на кнопку войти
+        NewAccount.setOnAction(event -> {//переход на создание акка
+            stackPane.getChildren().clear();
+            Register();
+        });//Нажатие на надпись, что нет акка
+        //        Enter.setOnAction(actionEvent -> GameStart());//Нажатие на кнопку войти
     }
 
-    private void Register(){
-        Stage RegisterMenu = new Stage();//очередная инициализация, только уже регистрации, если чел нажал, что акка нет
-        TextField Nick = new TextField("Введите имя");
-        TextField Password = new TextField("Введите пароль");
-        TextField SecretWord = new TextField("Введите секретное слово");
-        StackPane StartMain = new StackPane();
-        StackPane Reg = new StackPane();
-        StartMain.getChildren().addAll(Nick, Password, SecretWord);
-        Scene Register = new Scene(Reg, 200, 200);
-        RegisterMenu.setScene(Register);
-        RegisterMenu.setResizable(false);
-        RegisterMenu.setTitle("Окно регистрации");//следующая строка уже открытие окна
-        RegisterMenu.show();
+    private void Register(){//очередная инициализация, только уже регистрации, если чел нажал, что акка нет
+        Group RegisterStak = getRegister();
+        Group StartReg = new Group();
+        Password.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue)->Cheker(Password, ReturnPassword, FalsePass));
 
+        // Добавляем слушатель изменения текста для поля ввода повторного пароля
+        ReturnPassword.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> Cheker(Password, ReturnPassword, FalsePass));
+        //Кнопка информации
+        ImageView InfButton = new ImageView("C:\\Users\\ABOBUS2006\\IdeaProjects\\demo2.1\\idef\\info.png");
+        Button WhatWord = new Button("", InfButton);
+        InfButton.setFitWidth(WhatWord.getWidth());
+        InfButton.setFitHeight(WhatWord.getHeight());
+        InfButton.setPreserveRatio(false);
+        WhatWord.setStyle("-fx-padding: -15;");
+        WhatWord.setPrefWidth(30); // Установка предпочтительной ширины кнопки
+        WhatWord.setPrefHeight(30); // Установка предпочтительной высоты кнопки
+        WhatWord.setLayoutY(10);
+        WhatWord.setLayoutX(10);
+        //Кнопка для подтверждения регистрации
+        ImageView RegIm = new ImageView("C:\\Users\\ABOBUS2006\\IdeaProjects\\demo2.1\\idef\\entry-door.png");
+        Button Reg = new Button("", RegIm);
+        RegIm.setFitWidth(Reg.getWidth());
+        RegIm.setFitHeight(Reg.getHeight());
+        RegIm.setPreserveRatio(false);
+        Reg.setStyle("-fx-padding: -15;");
+        Reg.setPrefWidth(15); // Установка предпочтительной ширины кнопки
+        Reg.setPrefHeight(20); // Установка предпочтительной высоты кнопки
+        Reg.setLayoutY(260);
+        Reg.setLayoutX(180);
+        //продолжение основного блока
+        StartReg.getChildren().addAll(RegisterStak, WhatWord, Reg, FalsePass);
+        Scene Register = new Scene(StartReg, 400, 400);
+        StartMenu.setScene(Register);
+        StartMenu.setResizable(false);
+        StartMenu.setTitle("Окно регистрации");//следующая строка уже открытие окна
+        StartMenu.show();
+        WhatWord.setOnMouseEntered((MouseEvent event) -> WhatWord.setTooltip(new Tooltip("Секретное слово нужно для изменения пароля в случае непредвиденных ситуаций!")));
+        Reg.setOnAction(actionEvent -> {
+            Password.clear();
+            ReturnPassword.clear();
+            StartReg.getChildren().clear();
+            StarMenu();
+        });
+
+
+    }
+
+    private void Cheker(PasswordField password, PasswordField returnPassword, ImageView falsePass){
+        String password1 = Password.getText();
+        String confirmPassword = ReturnPassword.getText();
+
+        if (!password1.equals(confirmPassword) || password1.isEmpty() || confirmPassword.isEmpty()) {
+            FalsePass.setVisible(true);
+            Tooltip tooltip = new Tooltip("Пароли не совпадают или одно из полей пустое!");
+            Tooltip.install(FalsePass, tooltip);
+        } else {
+            FalsePass.setVisible(false);
+        }
     }
 
     private Group getStartMenu(){
         ImageView EnterButton = new ImageView("C:\\Users\\ABOBUS2006\\IdeaProjects\\demo2.1\\idef\\entry-door.png");
         Button Enter = new Button("",EnterButton);//Отсюда начинается херня для регистрации и входа
         TextField Nick = new TextField();
-        TextField Password = new TextField();
+        PasswordField  Password = new PasswordField ();
         Hyperlink ForgotPassword = new Hyperlink("Забыли пароль?");
         Label Error = new Label("*Введен неверный логин или пароль");
         //Кнопка входа
@@ -221,6 +269,33 @@ public class HelloApplication extends Application {
         Error.setLayoutY(220);
         Error.setLayoutX(95);
         return new Group(Enter,Nick,Password,ForgotPassword, Error);
+    }
+
+    private Group getRegister(){
+        TextField Nick = new TextField();
+        TextField SecretWord = new TextField();
+        //Поле ввода имени
+        Nick.setPromptText("Введите имя");
+        Nick.setLayoutY(70);
+        Nick.setLayoutX(120);
+        //Поле ввода пароля
+        Password.setPromptText("Введите пароль");
+        Password.setLayoutY(100);
+        Password.setLayoutX(120);
+        //Поле ввода пароля
+        ReturnPassword.setPromptText("Повторите ввод пароля");
+        ReturnPassword.setLayoutY(130);
+        ReturnPassword.setLayoutX(120);
+        //Поле Секретного слова
+        SecretWord.setPromptText("Слово для защиты");
+        SecretWord.setLayoutY(160);
+        SecretWord.setLayoutX(120);
+        //Иконка несовпадения
+        FalsePass.setVisible(false);
+        FalsePass.setLayoutY(103);
+        FalsePass.setLayoutX(270);
+        return new Group(Nick, Password, SecretWord, ReturnPassword, FalsePass);
+
     }
 
     public static void main(String[] args) {launch();}
